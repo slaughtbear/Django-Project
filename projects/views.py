@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import ProjectForm
 from .models import Project
@@ -29,3 +29,29 @@ def projects(request): # Vista para visualizar todos los proyectos de cada usuar
     return render(request, 'pages/projects.html', { # 2. Se renderiza la página de proyectos
         'projects': projects # 3. Con los proyectos en progreso del usuario
     })
+
+@login_required
+def project_detail(request, id): # Vista para ver detalles de un proyecto y actualizarlo
+    if request.method == 'GET': # Si el método de acceso a la ruta es GET:
+        # 1. Se crea una instancia del proyecto filtando por el id y el usuario
+        project = get_object_or_404(Project, pk=id, user=request.user) # Si el proyecto no existe se obtiene un error 404
+        # 2. Se crea una instancia del formulario para crear un proyecto
+        form = ProjectForm(instance=project) # Con los datos del proyecto que se solicita por id
+        return render(request, 'pages/project_detail.html', { # 3. Se renderiza la página la información del proyecto
+            'project': project, # 4. Con todos los datos del proyecto
+            'form': form # 5. Y el formulario para actualizar esos datos
+        })
+    else: # Si el método de acceso a la ruta es POST:
+        try:  # 1. Se usa un bloque de prueba para crear crear un proyecto
+            # 2. Se crea una instancia del proyecto filtando por el id y el usuario
+            project = get_object_or_404(Project, pk=id, user=request.user)
+            # 3. Se crea una instancia del formulario con los datos enviados por el usuario
+            form = ProjectForm(request.POST, instance=project) 
+            form.save() # 4. Se almacenan los cambios en la base de datos
+            return redirect('projects') # 5. Se redirecciona a la página de proyectos del usuario
+        except ValueError: # Si ocurre un error en la actualización del proyecto:
+            return render(request, 'pages/project_detail.html', { # 1. Se renderiza la página la información del proyecto
+            'project': project, # 2. Con todos los datos del proyecto
+            'form': form, # 5. Con el formulario para actualizar esos datos
+            'error': 'Error actualizando tarea...' # 6. Mandando un error al usuario
+        })
