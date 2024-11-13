@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import ProjectForm
 from .models import Project
+from django.utils import timezone
 
 @login_required
 def create_project(request): # Vista para crear un proyecto
@@ -24,7 +25,7 @@ def create_project(request): # Vista para crear un proyecto
 
 @login_required
 def projects(request): # Vista para visualizar todos los proyectos de cada usuario
-    # 1. Se crea una instancia del proyecto filtrando proyectos del usuario sin terminar 
+    # 1. Se crea una instancia del proyecto filtrando proyectos del usuario que no se han completado 
     projects = Project.objects.filter(user=request.user, date_completed__isnull=True)
     return render(request, 'pages/projects.html', { # 2. Se renderiza la página de proyectos
         'projects': projects # 3. Con los proyectos en progreso del usuario
@@ -55,3 +56,11 @@ def project_detail(request, id): # Vista para ver detalles de un proyecto y actu
             'form': form, # 5. Con el formulario para actualizar esos datos
             'error': 'Error actualizando tarea...' # 6. Mandando un error al usuario
         })
+
+@login_required
+def complete_project(request, id): # Vista para marcar un proyecto como completado
+    project = get_object_or_404(Project, pk=id, user=request.user) # Se crea una instancia del proyecto filtando por el id y el usuario
+    if request.method == 'POST': # Si el método de acceso a la ruta es POST:
+        project.date_completed = timezone.now() # 1. Se actualiza la fecha de completado
+        project.save() # 2. Se almacenan los cambios en la base de datos
+        return redirect('projects') # 3. Se redirecciona a la página de proyectos del usuario
