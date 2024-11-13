@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate # Funciones para iniciar y cerrar sesión, y autenticar
 from django.db import IntegrityError # Maneja errores de integridad de la base de datos
+from django.contrib.auth.decorators import login_required
 
 def signup(request): # Vista para registrar un usuario
     if request.method == 'GET': # Si el método de acceso a la ruta es GET:
@@ -48,6 +49,11 @@ def signin(request): # Vista para el inicio de sesión
         else: # Si el usuario sí existe en la base de datos:
             login(request, user) # 1. Se inicia sesión con la cuenta del usuario
             return redirect('tests') # 2. Y finalmente lo redirecciona a una página
+        
+@login_required
+def signout(request): # Vista para cerrar sesión
+    logout(request) # 1. Se cierra la sesión del usuario autenticado
+    return redirect('tests') # 2. Se redirecciona a una página
 
 def tests(request):
     return render(request, 'pages/test.html')
