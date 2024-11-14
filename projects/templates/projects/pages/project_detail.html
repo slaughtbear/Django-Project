@@ -1,0 +1,14 @@
+{% extends 'projects/layouts/base.html' %}
+{% block content %}
+<h1>{{project.name}}</h1>
+{{error}}
+<form method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button>Actualizar</button>
+</form>
+<form action="{% url 'complete_project' project.id %}" method="POST">
+    {% csrf_token %}
+    <button>Completar</button>
+</form>
+{% endblock %}
