@@ -21,7 +21,7 @@ def signup(request): # Vista para registrar un usuario
                 )
                 user.save() # 4. Se guarda el usuario en la base de datos
                 login(request, user) # 5. Se inicia sesión con la cuenta del usuario creado
-                return redirect('tests') # 6. Y finalmente lo redirecciona a una página
+                return redirect('projects') # 6. Y finalmente lo redirecciona a una página
             except IntegrityError: # Si ocurre un error al intentar crear el usuario:
                 return render(request, 'pages/signup.html', { # 1. Se renderiza de nuevo la página de registro
                     'form': UserCreationForm, # 2. Formulario de Django Auth para crear un usuario
@@ -53,7 +53,7 @@ def signin(request): # Vista para el inicio de sesión
 @login_required
 def signout(request): # Vista para cerrar sesión
     logout(request) # 1. Se cierra la sesión del usuario autenticado
-    return redirect('tests') # 2. Se redirecciona a una página
+    return redirect('home') # 2. Se redirecciona a una página
 
 def tests(request):
     return render(request, 'pages/test.html')
