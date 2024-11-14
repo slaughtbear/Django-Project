@@ -5,6 +5,12 @@
             <a href="{% url 'projects' %}">Proyectos</a>
         </li>
         <li>
+            <a href="{% url 'projects_completed' %}">Proyectos terminados</a>
+        </li>
+        <li>
+            <a href="{% url 'create_project' %}">Crear proyecto</a>
+        </li>
+        <li>
             <a href="{% url 'logout' %}">Cerrar sesión</a>
         </li>
         {% else %} <!-- Si el usuario no está autenticado  -->
