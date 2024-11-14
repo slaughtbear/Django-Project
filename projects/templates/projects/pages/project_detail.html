@@ -11,4 +11,8 @@
     {% csrf_token %}
     <button>Completar</button>
 </form>
+<form action="{% url 'delete_project' project.id %}" method="POST">
+    {% csrf_token %}
+    <button>Eliminar</button>
+</form>
 {% endblock %}
