@@ -32,6 +32,14 @@ def projects(request): # Vista para visualizar todos los proyectos de cada usuar
     })
 
 @login_required
+def projects_completed(request): # Vista para visualizar los proyectos que ya se han completado
+    # 1. Se crea una instancia del proyecto filtrando proyectos del usuario que ya se completaron 
+    projects = Project.objects.filter(user=request.user, date_completed__isnull=False).order_by('-date_completed') 
+    return render(request, 'projects/pages/projects.html', { # 2. Se renderiza la página de proyectos
+        'projects': projects # 3. Con los proyectos completados por del usuario
+    })
+
+@login_required
 def project_detail(request, id): # Vista para ver detalles de un proyecto y actualizarlo
     if request.method == 'GET': # Si el método de acceso a la ruta es GET:
         # 1. Se crea una instancia del proyecto filtando por el id y el usuario
@@ -59,8 +67,17 @@ def project_detail(request, id): # Vista para ver detalles de un proyecto y actu
 
 @login_required
 def complete_project(request, id): # Vista para marcar un proyecto como completado
-    project = get_object_or_404(Project, pk=id, user=request.user) # Se crea una instancia del proyecto filtando por el id y el usuario
+    # Se crea una instancia del proyecto filtando por el id y el usuario
+    project = get_object_or_404(Project, pk=id, user=request.user) 
     if request.method == 'POST': # Si el método de acceso a la ruta es POST:
         project.date_completed = timezone.now() # 1. Se actualiza la fecha de completado
         project.save() # 2. Se almacenan los cambios en la base de datos
         return redirect('projects') # 3. Se redirecciona a la página de proyectos del usuario
+    
+@login_required
+def delete_project(request, id): # Vista para eliminar un proyecto
+    # Se crea una instancia del proyecto filtando por el id y el usuario
+    project = get_object_or_404(Project, pk=id, user=request.user) 
+    if request.method == 'POST':  # Si el método de acceso a la ruta es POST:
+        project.delete() # 1. Se elimina el proyecto
+        return redirect('projects') # 2. Se redirecciona a la página de proyectos del usuario
