@@ -48,7 +48,7 @@ def signin(request): # Vista para el inicio de sesión
             })
         else: # Si el usuario sí existe en la base de datos:
             login(request, user) # 1. Se inicia sesión con la cuenta del usuario
-            return redirect('tests') # 2. Y finalmente lo redirecciona a una página
+            return redirect('projects') # 2. Y finalmente lo redirecciona a la página de sus proyectos
         
 @login_required
 def signout(request): # Vista para cerrar sesión
