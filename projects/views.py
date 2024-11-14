@@ -7,7 +7,7 @@ from django.utils import timezone
 @login_required
 def create_project(request): # Vista para crear un proyecto
     if request.method == 'GET': # Si el método de acceso a la ruta es GET:
-        return render(request, 'pages/create_project.html', { # 1. Se renderiza la página para crear proyectos
+        return render(request, 'projects/pages/create_project.html', { # 1. Se renderiza la página para crear proyectos
             'form': ProjectForm # 2. Con el formulario basado en el modelo 
         })
     else: # Si el método de acceso a la ruta es POST:
@@ -18,7 +18,7 @@ def create_project(request): # Vista para crear un proyecto
             new_project = form.save() # 5. Se almacena el proyecto en la base de datos
             return redirect('projects') # 6. Se redirecciona a la página de proyectos del usuario
         except ValueError: # Si ocurre un error en la creación del proyecto:
-            return render(request, 'pages/create_project.html', { # 1. Se renderiza la página para crear proyectos
+            return render(request, 'projects/pages/create_project.html', { # 1. Se renderiza la página para crear proyectos
                 'form': ProjectForm, # 2. Con el formulario basado en el modelo 
                 'error': 'Por favor introduce correctamente los datos.' # 3. Mandando un mensaje de error
             })
@@ -27,7 +27,7 @@ def create_project(request): # Vista para crear un proyecto
 def projects(request): # Vista para visualizar todos los proyectos de cada usuario
     # 1. Se crea una instancia del proyecto filtrando proyectos del usuario que no se han completado 
     projects = Project.objects.filter(user=request.user, date_completed__isnull=True)
-    return render(request, 'pages/projects.html', { # 2. Se renderiza la página de proyectos
+    return render(request, 'projects/pages/projects.html', { # 2. Se renderiza la página de proyectos
         'projects': projects # 3. Con los proyectos en progreso del usuario
     })
 
@@ -38,7 +38,7 @@ def project_detail(request, id): # Vista para ver detalles de un proyecto y actu
         project = get_object_or_404(Project, pk=id, user=request.user) # Si el proyecto no existe se obtiene un error 404
         # 2. Se crea una instancia del formulario para crear un proyecto
         form = ProjectForm(instance=project) # Con los datos del proyecto que se solicita por id
-        return render(request, 'pages/project_detail.html', { # 3. Se renderiza la página la información del proyecto
+        return render(request, 'projects/pages/project_detail.html', { # 3. Se renderiza la página la información del proyecto
             'project': project, # 4. Con todos los datos del proyecto
             'form': form # 5. Y el formulario para actualizar esos datos
         })
@@ -51,7 +51,7 @@ def project_detail(request, id): # Vista para ver detalles de un proyecto y actu
             form.save() # 4. Se almacenan los cambios en la base de datos
             return redirect('projects') # 5. Se redirecciona a la página de proyectos del usuario
         except ValueError: # Si ocurre un error en la actualización del proyecto:
-            return render(request, 'pages/project_detail.html', { # 1. Se renderiza la página la información del proyecto
+            return render(request, 'projects/pages/project_detail.html', { # 1. Se renderiza la página la información del proyecto
             'project': project, # 2. Con todos los datos del proyecto
             'form': form, # 5. Con el formulario para actualizar esos datos
             'error': 'Error actualizando tarea...' # 6. Mandando un error al usuario
